@@ -3,6 +3,7 @@ package com.plivo.api;
 import com.plivo.api.data.Machine;
 import com.plivo.api.state.AddState;
 import com.plivo.api.state.AddTransit;
+import com.plivo.api.state.Move;
 import com.plivo.api.state.ShowState;
 
 import java.util.ArrayList;
@@ -10,7 +11,7 @@ import java.util.HashMap;
 import java.util.Scanner;
 
 public class Main {
-    public static Machine stateMachine = new Machine(new HashMap<>(), new ArrayList<>(), new HashMap<>());
+
     private static Scanner sc = new Scanner(System.in);
 
     private static String getActionData() {
@@ -22,28 +23,32 @@ public class Main {
     }
 
     public static void main(String[] args) {
-
-
-        System.out.println("Enter your action");
-
+        Machine stateMachine = new Machine(new HashMap<>(), new ArrayList<>(), new HashMap<>());
         // write your code here
         while (true) {
+            System.out.println("Enter your action");
+            System.out.println("add   : adds new state");
+            System.out.println("link   : adds new link, b/w states");
+            System.out.println("move    : move to new state");
+            System.out.println("show    : show current and previous state(s)");
+            System.out.println("show_all: show all state(s)");
+            System.out.println("exit: exit");
             String actionData = getActionData();
             switch (getActionDataName(actionData)) {
-                case "add_s":
-                    AddState.Do(actionData);
+                case "add":
+                    AddState.Do(actionData, stateMachine);
                     break;
-                case "add_t":
-                    AddTransit.Do(actionData);
+                case "link":
+                    AddTransit.Do(actionData, stateMachine);
                     break;
                 case "move":
-                    AddTransit.Do(actionData);
+                    Move.Do(actionData, stateMachine);
                     break;
                 case "show":
-                    ShowState.Current();
+                    ShowState.Current(stateMachine);
                     break;
                 case "show_all":
-                    ShowState.All();
+                    ShowState.All(stateMachine);
                     break;
                 case "exit":
                     System.out.println("Closing State Machine, Bye!");
@@ -52,6 +57,7 @@ public class Main {
                 default:
                     break;
             }
+            System.out.println("");
         }
     }
 }

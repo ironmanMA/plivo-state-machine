@@ -5,6 +5,10 @@ package com.plivo.api.callback;
  */
 public class Trigger {
     public static void Do(String stateNow, String stateFuture) {
-        System.out.println("Hitting callback from State:" + stateNow + ", To:" + stateFuture);
+        if (stateNow == null) {
+            System.out.println("Hitting callback from State:" + stateFuture);
+        } else {
+            System.out.println("Hitting callback from State:" + stateNow + ", To:" + stateFuture);
+        }
     }
 }

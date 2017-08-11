@@ -1,14 +1,16 @@
 package com.plivo.api.state;
 
-import static com.plivo.api.Main.stateMachine;
+import com.plivo.api.callback.Trigger;
+import com.plivo.api.data.Machine;
 
 /**
  * Created by 127.0.0.1.ma on 11/08/17.
  */
 public class Move {
-    public static void Do(String action) {
+    public static void Do(String action, Machine stateMachine){
         String[] states = action.split(" ");
         String stateNew = states[1];
+        String stateOld = stateMachine.getCurrentState();
 
         /*
           check if state exists
@@ -17,24 +19,30 @@ public class Move {
             System.out.println(stateNew + ", doest exist, can't move");
             return;
         }
-        if (!stateMachine.getAllStates().contains(stateLater)) {
-            System.out.println(stateLater + ", doest exist, can't move");
-            return;
-        }
         /*
             check with current state;
          */
-
-
-        /*
-            check if link exists
-         */
-        if (stateMachine.getLinks().get(stateFormer + stateLater) == null && stateMachine.getLinks().get(stateLater + stateFormer) == null) {
-            System.out.println("Path between " + stateLater + ", " + stateLater + ", doest exist, can't move");
-            return;
+        if (stateOld == null) {
+            stateMachine.setCurrentState(stateNew);
+            System.out.println("Initiated Transition " + stateNew);
+        } else {
+            if (stateOld.equals(stateNew)) {
+                System.out.println("already at State:" + stateNew);
+                return;
+            } else {
+                /*
+                    check if link exists
+                 */
+                if (stateMachine.getLinks().get(stateOld + stateNew) == null &&
+                        stateMachine.getLinks().get(stateNew + stateOld) == null) {
+                    System.out.println("Path between " + stateNew + ", "
+                            + stateOld + ", doest exist, can't move");
+                    return;
+                }
+                stateMachine.getTransitions().put(stateNew, stateOld);
+                stateMachine.setCurrentState(stateNew);
+            }
         }
-
-        stateMachine.getTransitions().put(stateLater, stateFormer);
-        stateMachine.setCurrentState(stateLater);
+        Trigger.Do(stateOld, stateNew);
     }
 }
